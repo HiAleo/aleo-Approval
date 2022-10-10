@@ -79,7 +79,6 @@ function approval_1:
 // 最终的取款人能够凭借『状态为steps的审批单』去申请coin_a的审批额度
 function get_money:
   input r0 as proposal.record;
-  input r1 as u64.private;
 
   // get_money只能由审批中的目标用户调用
   assert.eq self.caller r0.user;
@@ -87,6 +86,6 @@ function get_money:
   assert.eq r0.status r0.steps;
     
   // 放款
-  call coin_a.aleo/mint r0.user r0.money into r2;
-  output r2 as coin_a.aleo/coin_a.record;
+  call coin_a.aleo/mint r0.user r0.money into r1;
+  output r1 as coin_a.aleo/coin_a.record;
 
