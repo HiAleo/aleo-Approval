@@ -157,7 +157,7 @@ We need modify address and private_key in program.json to the user's.
 Run the command.
 
 ```bash
-../aleo run get_money "{  owner: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private, gates: 0u64.private,first:aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,second: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private,steps:2u64.private,money: 100u64.private,user:aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,status: 2u64.private,_nonce:6699479237227252669430081673879453325257640923053273909992409020631904897419group.public}"
+aleo run get_money "{  owner: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private, gates: 0u64.private,first:aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,second: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private,steps:2u64.private,money: 100u64.private,user:aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,status: 2u64.private,_nonce:6699479237227252669430081673879453325257640923053273909992409020631904897419group.public}"
 
 ➡️  Output
 
