@@ -1,7 +1,7 @@
 # approval.aleo
 
 ## Overview
-This program provides an approval procedure based on Aleo record. In which you can propose an issue, then deliver it to approvers one by one. At last, you can get money with the issued record or else be rejectd.
+This program provides an approval procedure based on Aleo record. In which you can propose an issue, then deliver it to approvers one by one. At last, you can get money with the issued record or else be rejected.
 
 ## Steps
 1. propose(first, second, steps, money_amount, money_receiver) is called by the initiator to specify a "first and second" approver, the number of approvers, the content of the approval description text, and the coin_a amount to apply, payee and other information. If successful, an approval record will be created and sent to the first approver and payee.
@@ -25,4 +25,148 @@ Due to the limitation of "MAX_OPERANDS=8", the number of fields in a record cann
 ### 注:
    由于受到 『MAX_OPERANDS = 8』的限制，一个record中的字段数量无法超过6（另两个被owner和gates占据），所以没有办法建立更复杂的审批Record和更多的审批人数，期望Aleo snarkVM后继能够进一步提升空间。
 
-## Build Guide
+## Build Guide and Demo
+First, build the program.
+```bash
+aleo build
+```
+
+Now assume that user address is "aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq",
+the first approver is "aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4",
+the second approver is "aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk".
+
+### 1. Propose 
+We need add user's address and private_key to program.json.
+```bash
+    "development": {
+        "private_key": "APrivateKey1zkpB3DxLAYtTP2NZ3dZiebXaAJtt7ZSQQ6LMEhVyKy2ynVH",
+        "address": "aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq"
+    },
+```
+Run the command.
+```bash
+aleo run propose "aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4" "aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk" 2u64 100u64 "aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq"
+
+➡️  Outputs
+
+ • {
+  owner: aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,
+  gates: 0u64.private,
+  first: aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,
+  second: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private,
+  steps: 2u64.private,
+  money: 100u64.private,
+  user: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,
+  status: 0u64.private,
+  _nonce: 3748039912422390871690277358410268566505423656152777624959979017988490974585group.public
+}
+ • {
+  owner: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,
+  gates: 0u64.private,
+  first: aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,
+  second: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private,
+  steps: 2u64.private,
+  money: 100u64.private,
+  user: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,
+  status: 0u64.private,
+  _nonce: 3893043370746969475692258358516755325769654110419007516828834432369957061053group.public
+}
+```
+
+The first record is owned by the first approver.
+
+### 2. approval_0
+We need add the first approver's address and private_key to program.json.
+```bash
+    "development": {
+        "private_key": "APrivateKey1zkp4XPrUCPZLTxTac9kJE7hMYwDQS9xocthq77EkKtsv3sY",
+        "address": "aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4"
+    },
+```
+Run the command.
+
+```bash
+aleo run approval_0 "{owner: aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private, gates:0u64.private, first:aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,second: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private,steps: 2u64.private,money: 100u64.private,user:aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,status: 0u64.private,_nonce:3748039912422390871690277358410268566505423656152777624959979017988490974585group.public}" 0u64
+
+➡️  Outputs
+
+ • {
+  owner: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,
+  gates: 0u64.private,
+  first: aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,
+  second: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private,
+  steps: 2u64.private,
+  money: 100u64.private,
+  user: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,
+  status: 1u64.private,
+  _nonce: 1405448036045437038147659712813702898433870215559354294283132352108474803802group.public
+}
+ • {
+  owner: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private,
+  gates: 0u64.private,
+  first: aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,
+  second: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private,
+  steps: 2u64.private,
+  money: 100u64.private,
+  user: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,
+  status: 1u64.private,
+  _nonce: 1584777295271404390346712341524029639827353574055985376649200581200193402648group.public
+}
+```
+
+The second record is owned by the second approver.
+
+### 3. approval_1
+We need add the second approver's address and private_key to program.json.
+```bash
+    "development": {
+        "private_key": "APrivateKey1zkp2p4ieFsUJZ2EkudZEsxJTfw81T3qjdKjdbdWcJWKXapG",
+        "address": "aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk"
+    },
+```
+Run the command.
+
+```bash
+aleo run approval_1 "{owner: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private, gates: 0u64.private, first:aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,second:aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private, steps: 2u64.private, money: 100u64.private, user: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private, status: 1u64.private,  _nonce: 1584777295271404390346712341524029639827353574055985376649200581200193402648group.public}" 0u64
+
+➡️  Output
+
+ • {
+  owner: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,
+  gates: 0u64.private,
+  first: aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,
+  second: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private,
+  steps: 2u64.private,
+  money: 100u64.private,
+  user: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,
+  status: 2u64.private,
+  _nonce: 6699479237227252669430081673879453325257640923053273909992409020631904897419group.public
+}
+```
+
+Now the output record belongs to the user(recipient). The status is 2 (equals steps), which indicates the propose is approved.
+
+### 4. get_money
+We need modify address and private_key in program.json to the user's.
+```bash
+    "development": {
+        "private_key": "APrivateKey1zkpB3DxLAYtTP2NZ3dZiebXaAJtt7ZSQQ6LMEhVyKy2ynVH",
+        "address": "aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq"
+    },
+```
+Run the command.
+
+```bash
+../aleo run get_money "{  owner: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private, gates: 0u64.private,first:aleo1hf0jutqqeqv2nhazntuted4z99ax873lgfaw623ytqc68z72cqqqa9xeg4.private,second: aleo1f72p3g82eur6x8ysd4u6hl8rmt8un6eelpzrdsvfkp663wf6uuzs2v8cfk.private,steps:2u64.private,money: 100u64.private,user:aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,status: 2u64.private,_nonce:6699479237227252669430081673879453325257640923053273909992409020631904897419group.public}"
+
+➡️  Output
+
+ • {
+  owner: aleo1gy9h3a9sywc7p23acd5jjt9suuh663q0fv8uegpgr36je20xf5rsggnarq.private,
+  gates: 0u64.private,
+  amount: 100u64.private,
+  custom1: 1234u64.private,
+  _nonce: 4229060545916263684699917783761988423280936890985688009328015233539612670151group.public
+}
+```
+At last, the user get a token valued 100.
