@@ -7,19 +7,19 @@ record proposal:
   
   first as address.private;
   second as address.private;
-  steps as u64.private;           // 审批流的步骤总数（<=4),对应上述四位
-  money as u64.private;           // 审批完成的批款
-  user as address.private;        // 审批完成后的打款对象
-  status as u64.private;          // 审批当前的状态：0进行中，1成功，2失败
+  steps as u64.private;           // Total steps in the procedure. But this field is reserved to keep generic. In our demo, only 2 steps is required. 
+  money as u64.private;           
+  user as address.private;        // Recipient of money
+  status as u64.private;          // How many approvers accept
 
 function propose:
-  input r0 as address.private;    // 第一顺位审批人
-  input r1 as address.private;    // 第二顺位审批人
-  input r2 as u64.private;        // 审批人个数（<=4)
-  input r3 as u64.private;        // 审批金额
-  input r4 as address.private;    // 审批流程走完的放款接收人
+  input r0 as address.private;    // first approver 
+  input r1 as address.private;    // second approver
+  input r2 as u64.private;        // number of approvers
+  input r3 as u64.private;        // amount of money 
+  input r4 as address.private;    // recipient of money 
   
-  // 确保 r4是在1~4范围中
+  // assert r2 in [1, 4]
   is.eq r2 1u64 into r5;
   is.eq r2 2u64 into r6;
   is.eq r2 3u64 into r7;
@@ -31,61 +31,62 @@ function propose:
   
   assert.eq r11 true;
   
-  // 首先cast给第一顺位审批人
+  // This record belongs to the first approver
   cast r0 0u64 r0 r1 r2 r3 r4 0u64 into r12 as proposal.record;
-  // 也给最后的收款人发放一个记录进行告知
+
+  // This record belongs to the recipient
   cast r4 0u64 r0 r1 r2 r3 r4 0u64 into r13 as proposal.record;
+
   output r12 as proposal.record;
   output r13 as proposal.record;
   
-// 由第一顺位审批人调用
+// This function is called by the first approver
 function approval_0:
   input r0 as proposal.record;
-  input r1 as u64.private;
+  input r1 as u64.private;             // 0-accept, others-reject
 
-  // approval_0只能由第一个审批者调用
+  // self.caller must be the first approver
   assert.eq self.caller r0.first;
-  // 确保当前进度为0
+
+  // current status must be 0
   assert.eq r0.status 0u64;
   
-  // 比较审批人是否同意，同意则设置状态为0,否则为10，表示终止  
+  // We denote reject status as 10 here.
   is.eq r1 0u64 into r2;
   ternary r2 1u64 10u64 into r3;
   
   cast r0.user 0u64 r0.first r0.second r0.steps r0.money r0.user r3 into r4 as proposal.record;
   cast r0.second 0u64 r0.first r0.second r0.steps r0.money r0.user r3 into r5 as proposal.record;
   output r4 as proposal.record;
-  output r5 as proposal.record;      
+  output r5 as proposal.record;
 
-// 由第二顺位审批人调用
+// This funtion is called by the second approver
 function approval_1:
   input r0 as proposal.record;
-  input r1 as u64.private;
+  input r1 as u64.private;            // 0-accept, others-reject
 
-  // approval_1只能由第二个审批者调用
+  // self.caller must be the second approver
   assert.eq self.caller r0.second;
-  // 确保当前进度为1
+
+  // current status must be 1, which denotes 1 approver has approved.
   assert.eq r0.status 1u64;
   
-  // 比较审批人是否同意，同意则设置状态为2,否则为10，表示终止  
+  // We denote reject status as 10 here.
   is.eq r1 0u64 into r2;
   ternary r2 2u64 10u64 into r3;
   
   cast r0.user 0u64 r0.first r0.second r0.steps r0.money r0.user r3 into r4 as proposal.record;
-  //cast r0.third 0u64 r0.first r0.second r0.steps r0.money r0.user r3 into r4 as proposal.record;
   output r4 as proposal.record;
-  //output r4 as proposal.record;      
 
-// 最终的取款人能够凭借『状态为steps的审批单』去申请coin_a的审批额度
+// The recipient can get money by the proposal.record. 
 function get_money:
   input r0 as proposal.record;
 
-  // get_money只能由审批中的目标用户调用
+  // self.caller must be user of the proposal.record.
   assert.eq self.caller r0.user;
-  // 必须是状态为steps，表示全体审批通过
+  // the status must be the proposal.record.steps, which indicates all approved
   assert.eq r0.status r0.steps;
     
-  // 放款
+  // We assume the asset is coin_a here.
   call coin_a.aleo/mint r0.user r0.money into r1;
   output r1 as coin_a.aleo/coin_a.record;
-
